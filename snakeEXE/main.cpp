@@ -5,8 +5,11 @@ bool gameOver;
 const int width = 20;
 const int height = 20;
 int x, y, fruitX, score, fruitY;
+int tailX[100], tailY[100];
+int nTail;
 enum eDirection { STOP = 0, LEFT, RIGHT, UP, DOWN};
 eDirection dir;
+
 void Setup()
 {
   gameOver = false;
@@ -33,12 +36,24 @@ void Draw()
         cout << "#";
 
         if (i == y && j == x)
-          cout << "0"<
+          cout << "0";
         else if (i == fruitY && j == fruitX)
-          cout << "F"
+          cout << "F";
         else
-          cout << " "
-      
+        {
+          for (int k = 0; k < nTail; k++)
+          {
+            bool print = false;
+            if (tailX[k] == j && tailY[k] == i)
+            {
+              cout << "o";
+              print = true;
+            }
+          }
+          if(!print)
+            cout << " ";
+        }
+
 
       if (j == width - 1)
         cout << "#";
@@ -49,6 +64,7 @@ void Draw()
   for (int i = 0; i< width+2; i++)
     cout << "#"
   cout << endl;
+  cout << "Score: " << score << endl;
 }
 
 void Input()
@@ -79,6 +95,18 @@ void Input()
 
 void Logic()
 {
+  int prevX = tailX[0];
+  int prevY = tailY[0];
+  int prev2X, prev2Y;
+  for(int i = 1; i < nTail; i++)
+  {
+    prev2X = tailX[i];
+    prev2Y = tailY[i];
+    tailX[i] = prevX;
+    tailY[i] = prevY;
+    prevX = prev2X;
+    prevY = prev2Y;
+  }
   switch (dir)
     {
     case LEFT:
@@ -95,6 +123,16 @@ void Logic()
         break;
     default:
         break;
+    }
+    if (x > width || x < 0 || y > height || y < 0)
+      gameOver = true;
+
+    if (x == fruitX && y == fruitY)
+    {
+      score += 10;
+      fruitX = rand() % width;
+      fruitY = rand() % height;
+      nTail++;
     }
 }
 
